@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <meta name="author" content="Saneca Mack">
   <link rel="icon" href="https://res.cloudinary.com/dyqfcbgqo/image/upload/Mack_Magic_Mobile_Bar_logo_202606201221_ulgxgs.jpg">
-  <title>MAGIC SNAKE</title>
+  <title>FEED THE SNAKE</title>
   <style>
     body {
       /* Prevent drag-to-reload */
@@ -76,7 +76,7 @@
 <body>
   <div id="modal"></div>
   <div class="grid-container"></div>
-  <div id='scoreboard'>MAGIC SNAKE</div>
+  <div id='scoreboard'>FEED THE SNAKE</div>
   <script>
     var snakeGame = (function() {
       // Editable variables
@@ -119,7 +119,12 @@
         }
         _game.resetModal();
       });
+let highScore = localStorage.getItem("highScore") || 0;
 
+if(score > highScore){
+  highScore = score;
+  localStorage.setItem("highScore", highScore);
+}
       // Detect touch start (for swipe)
       document.addEventListener("touchstart", function(e) {
         touchX = e.touches[0].pageX;
