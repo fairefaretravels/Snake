@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RadioMeltdown Snake</title>
+
+<style>
+  body {
+    margin: 0;
+    background: #0b0f1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    color: white;
+  }
+
+  h1 {
+    margin: 10px;
+    font-size: 18px;
+  }
+
+  canvas {
+    background: #050505;
+    border: 2px solid #00f5d4;
+    touch-action: none;
+  }
+
+  .info {
+    margin: 10px;
+    font-size: 14px;
+  }
+
+  a {
+    color: #00f5d4;
+    text-decoration: none;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>RadioMeltdown Snake</h1>
+<div class="info">
+  Listeners: <span id="score">0</span> |
+  <a href="https://Radiomeltdown.store">Listen Live</a>
+</div>
+
+<canvas id="game" width="300" height="300"></canvas>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+const box = 15;
+
+let snake = [{x: 150, y: 150}];
+let direction = "RIGHT";
+
+let food = {
+  x: Math.floor(Math.random() * 20) * box,
+  y: Math.floor(Math.random() * 20) * box
+};
+
+let score = 0;
+
+document.addEventListener("keydown", e => {
+  if (e.key === "ArrowUp" && direction !== "DOWN") direction = "UP";
+  if (e.key === "ArrowDown" && direction !== "UP") direction = "DOWN";
+  if (e.key === "ArrowLeft" && direction !== "RIGHT") direction = "LEFT";
+  if (e.key === "ArrowRight" && direction !== "LEFT") direction = "RIGHT";
+});
+
+function draw() {
+  ctx.fillStyle = "#050505";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // FOOD (music node)
+  ctx.fillStyle = "#00f5d4";
+  ctx.shadowColor = "#00f5d4";
+  ctx.shadowBlur = 10;
+  ctx.fillRect(food.x, food.y, box, box);
+  ctx.shadowBlur = 0;
+
+  // SNAKE
+  for (let i = 0; i < snake.length; i++) {
+    ctx.fillStyle = "linear-gradient"; // fallback ignored by canvas
+    ctx.fillStyle = "#ff006e";
+    ctx.fillRect(snake[i].x, snake[i].y, box, box);
+  }
+
+  let headX = snake[0].x;
+  let headY = snake[0].y;
+
+  if (direction === "UP") headY -= box;
+  if (direction === "DOWN") headY += box;
+  if (direction === "LEFT") headX -= box;
+  if (direction === "RIGHT") headX += box;
+
+  // eat food
+  if (headX === food.x && headY === food.y) {
+    score++;
+    document.getElementById("score").innerText = score;
+
+    food = {
+      x: Math.floor(Math.random() * 20) * box,
+      y: Math.floor(Math.random() * 20) * box
+    };
+  } else {
+    snake.pop();
+  }
+
+  let newHead = {x: headX, y: headY};
+
+  // collision
+  if (
+    headX < 0 ||
+    headY < 0 ||
+    headX >= canvas.width ||
+    headY >= canvas.height ||
+    collision(newHead, snake)
+  ) {
+    clearInterval(game);
+    alert("Broadcast ended. Final listeners: " + score);
+  }
+
+  snake.unshift(newHead);
+}
+
+function collision(head, array) {
+  for (let i = 0; i < array.length; i++) {
+    if (head.x === array[i].x && head.y === array[i].y) {
+      return true;
+    }
+  }
+  return false;
+}
+
+let game = setInterval(draw, 120);
+</script>
+
+</body>
+</html>
